@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<!-- <suite name="Suite" parallel="methods" thread-count="2" data-provider-thread-count="2"> -->
+<suite name="Suite">
+	<listeners>
+		<listener class-name="com.utilities.TestListener" />
+	</listeners>
+	<test name="Parallel Test">
+		<classes>
+			<class name="com.testcases.ClarityPPMHealthCheck">
+			<methods>
+				<!--  <include name="ValidateNikuLogin"/>
+				 <include name="ValidateAdvanceReporting"/>
+				 <include name="ValidateJasperSoftReport"/> -->
+				<exclude name ="ValidateHDBCluster"/>
+			</methods>
+			</class>
+		</classes>
+	</test> <!-- Test -->
+</suite> <!-- Suite -->
