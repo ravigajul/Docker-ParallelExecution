@@ -3,14 +3,22 @@ package com.utilities;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.io.FileHandler;
+import org.testng.ISuite;
+import org.testng.ISuiteListener;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
@@ -21,7 +29,9 @@ import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.testcases.TestBase;
 
-public class TestListener extends TestBase implements ITestListener {
+public class TestListener extends TestBase implements ITestListener, ISuiteListener {
+
+	public String messageBody;
 
 	public synchronized void onStart(ITestContext context) {
 		System.out.println("*** Test Suite " + context.getName() + " started ***");
@@ -47,18 +57,38 @@ public class TestListener extends TestBase implements ITestListener {
 		ExtentManager.getInstance().flush();
 	}
 
+	public void onFinish(ISuite arg0) {
+
+		MonitoringMail mail = new MonitoringMail();
+		try {
+			messageBody = "Hi All,"+"<br><br>"+" Please find the Test Execution Report Below"+"<br>"+ "http://" + InetAddress.getLocalHost().getHostAddress()
+					+ ":8000/TestReport/Test-Automaton-Report.html"+"<br><br><br>"+ "Regards,"+"<br>"+"HealthCheck Automation";
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			mail.sendMail(TestConfig.server, TestConfig.from, TestConfig.to, TestConfig.subject, messageBody);
+			System.out.println("Mail sent successfully");
+		} catch (AddressException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	public void onTestStart(ITestResult result) {
 		System.out.println(("****Running test method " + result.getMethod().getMethodName() + "****"));
 		ExtentTestManager.startTest(result.getMethod().getMethodName());
-		ExtentManager.getInstance().flush();
 	}
 
 	public synchronized void onTestSuccess(ITestResult result) {
 		System.out.println("****Executed " + result.getMethod().getMethodName() + " test successfully****");
 		ITestContext context = result.getTestContext();
 		WebDriver driver = (WebDriver) context.getAttribute("driver");
-		ReportStatus("pass", result.getMethod().getMethodName() + " Passed");
-		ExtentManager.getInstance().flush();
+		ReportStatus("pass", "****" + result.getMethod().getMethodName() + " Passed****");
 	}
 
 	public synchronized void onTestFailure(ITestResult result) {
@@ -76,20 +106,15 @@ public class TestListener extends TestBase implements ITestListener {
 //			e.printStackTrace();
 //		}
 //		ExtentTestManager.getTest().log(Status.FAIL, result.getThrowable() + " failed");
-		ExtentManager.getInstance().flush();
 	}
 
 	public synchronized void onTestSkipped(ITestResult result) {
 		System.out.println("****Test " + result.getMethod().getMethodName() + " skipped****");
 		ExtentTestManager.getTest().log(Status.SKIP, "Test Skipped");
-		ExtentManager.getInstance().flush();
 	}
 
 	public synchronized void onTestFailedButWithinSuccessPercentage(ITestResult result) {
 		System.out.println("*** Test failed but within percentage % " + result.getMethod().getMethodName());
-		ExtentManager.getInstance().flush();
 	}
-
-
 
 }

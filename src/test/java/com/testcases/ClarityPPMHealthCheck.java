@@ -15,14 +15,17 @@ import org.testng.annotations.Test;
 import com.pages.HDBClusterHomePage;
 import com.pages.NikuHomePage;
 
+import junit.framework.Assert;
+
 public class ClarityPPMHealthCheck extends TestBase{
 
 	public NikuHomePage nikuhomepage;
 	
 	@Test(dataProvider="getData")
-	public void HealthCheck(String userName, String password) throws InterruptedException, ParseException, IOException {
-		System.out.println("Thread " +Thread.currentThread().getId()+"-->"+ userName +"-->"+password);
+	public void HealthCheck(String userName, String  password) throws InterruptedException, ParseException, IOException {
+		System.out.println("Thread " +Thread.currentThread().getId());
 		nhp.get().nikuLogin("rg030672","Welcome123!");
+		nhp.get().clickLearnLink();
 		nhp.get().clickAboutDialog();
 		nhp.get().checkProductName();
 		nhp.get().checkBuildVersion();
@@ -34,6 +37,7 @@ public class ClarityPPMHealthCheck extends TestBase{
 		nhp.get().checkAdvanceReporting();
 		nhp.get().checkJasperSoftReport();
 		nhp.get().checkLastRunTimeSlicesFinalTime();
+		nhp.get().ValidateLearnLink();
 		//ValidateHDBCluster();
 	}
 	

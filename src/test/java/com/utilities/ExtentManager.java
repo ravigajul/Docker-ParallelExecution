@@ -23,7 +23,6 @@ public class ExtentManager {
     //Create an extent report instance
     public static ExtentReports createInstance() {
         String fileName = getReportPath(reportFilepath);
-       
         ExtentHtmlReporter htmlReporter = new ExtentHtmlReporter(fileName);
         htmlReporter.config().setTheme(Theme.STANDARD);
         htmlReporter.config().setDocumentTitle(reportFileName);

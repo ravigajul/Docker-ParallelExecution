@@ -62,4 +62,3 @@ To wait for the elements that are loaded at runtime
 AjaxElementLocatorFactory factory= new AjaxElementLocatorFactory(driver, 10);
 		PageFactory.initElements(factory, this);
 
-# Docker-ParallelExecution

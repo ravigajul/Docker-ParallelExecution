@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.openqa.selenium.By;
 import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
@@ -25,6 +26,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.io.FileHandler;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
@@ -37,8 +39,8 @@ import org.testng.asserts.SoftAssert;
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.pages.NikuHomePage;
-import com.utilities.ExtentManager;
 import com.utilities.ExtentTestManager;
+import com.utilities.ExtentManager;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -60,7 +62,7 @@ public class TestBase {
 	public File screenshotFile;
 	public String screenShotName;
 
-	public Logger log = Logger.getLogger("devpinoyLogger");
+	//public Logger log = Logger.getLogger(TestBase.class);
 
 	public static ThreadLocal<WebDriver> dr = new ThreadLocal<WebDriver>();
 	public WebDriver driver;
@@ -76,11 +78,13 @@ public class TestBase {
 
 		// log
 		// log=Logger.getLogger("devpinoyLogger");
+		//PropertyConfigurator.configure("./src/test/java/com/properties/log4j.properties");
 
 		// softassert
 
 		// Properties file setup
-		log.debug("Initializing Properties and Driver");
+		
+		//log.debug("Initializing Properties and Driver");
 		String propertyfilepath = System.getProperty("user.dir");
 		File file = new File(propertyfilepath + "/src/test/java/com/properties/env.properties");
 		FileInputStream fileInput = null;
@@ -102,31 +106,33 @@ public class TestBase {
 
 		// Webdriver Setup
 
-		/*WebDriverManager.chromedriver().setup();
-		driver = new ChromeDriver();
-		dr.set(driver);
-		log.debug("Chrome Driver Launched");
-		context.setAttribute("driver", driver);
-		wait = new WebDriverWait(dr.get(), 30); 												
-		nikuhomepage= new  NikuHomePage((dr.get()));
-		nhp.set(nikuhomepage);*/
 		
-		/* *********Docker Execution ********/
-		
-		 remoteAddress = new URL("http://localhost:4444/wd/hub");
-		 url.set(remoteAddress); 
-		 
-		 ChromeOptions capabilities = new ChromeOptions(); //
-		 driver = new RemoteWebDriver(url.get(), capabilities);
-		 dr.set(driver);
-		 
-		 context.setAttribute("driver", dr.get());
-		 
-		 wait = new WebDriverWait(driver, 30);
-		  
-		 nikuhomepage = new NikuHomePage((dr.get()));
+		 WebDriverManager.chromedriver().setup(); 
+		 //WebDriverManager.getInstance(DriverManagerType.CHROME).setup();
+		 driver = new ChromeDriver();
+		 dr.set(driver); 
+		// log.debug("Chrome Driver Launched");
+		 context.setAttribute("driver", driver); 
+		 wait = new WebDriverWait(dr.get(), 30);
+		 nikuhomepage= new NikuHomePage((dr.get())); 
 		 nhp.set(nikuhomepage);
 		 
+
+		/* *********Docker Execution ********/
+
+	/*	remoteAddress = new URL("http://localhost:4444/wd/hub");
+		url.set(remoteAddress);
+
+		ChromeOptions capabilities = new ChromeOptions(); //
+		driver = new RemoteWebDriver(url.get(), capabilities);
+		dr.set(driver);
+
+		context.setAttribute("driver", dr.get());
+
+		wait = new WebDriverWait(driver, 30);
+
+		nikuhomepage = new NikuHomePage((dr.get()));
+		nhp.set(nikuhomepage);*/
 
 		/* *****************************************************************/
 
@@ -219,7 +225,6 @@ public class TestBase {
 			}
 			ExtentTestManager.getTest().log(Status.FAIL, msg);
 		}
-		ExtentManager.getInstance().flush();
 	}
 
 	public synchronized void sendKeys(WebElement element, String value) {
@@ -240,15 +245,14 @@ public class TestBase {
 			try {
 				elementText = element.getText();
 				element.click();
-				ReportStatus("info", "clicked the element" + elementText);
+				ReportStatus("info", "clicked the element " + elementText);
 				System.out.println("clicked " + elementText);
 			} catch (ElementClickInterceptedException eie) {
-				TimeUnit.SECONDS.sleep(10);
+				TimeUnit.SECONDS.sleep(20);
 				element.click();
 				System.out.println("Clicked " + elementText + " from Intercepted Exception");
 			} catch (StaleElementReferenceException sere) {
 				TimeUnit.SECONDS.sleep(20);
-				element.click();
 				System.out.println("Clicked " + elementText + " from Stale Element Reference Exception");
 			} catch (NoSuchElementException nee) {
 				TimeUnit.SECONDS.sleep(20);
@@ -290,10 +294,11 @@ public class TestBase {
 	public synchronized void verifyElement(WebElement element) throws IOException {
 		try {
 			Assert.assertTrue(isElementPresent(element), " element is not displayed");
+			ReportStatus("pass", "****" + element.getText() + " is verified successfully****");
 		} catch (Throwable t) {
-			ReportStatus("fail",element + " is not displayed");
-			System.out.println("element verification failed");
-			}
+			ReportStatus("fail", element + " is not displayed");
+			System.out.println("****" + element.getText() + "Element verification failed****");
+		}
 
 	}
 
@@ -301,12 +306,12 @@ public class TestBase {
 		try {
 
 			Assert.assertEquals(actual, expected);
-			ReportStatus("pass", expected + " is verfied successfully");
+			ReportStatus("pass", "****" + expected + " is verfied successfully****");
 			System.out.println(expected + " is verfied successfully");
 
 		} catch (Throwable t) {
-			ReportStatus("fail",expected + " verfication is failed");
-			System.out.println(expected + " verfication is failed");
+			ReportStatus("fail", "Expected version " +expected + " but found " + actual);
+			System.out.println("Expected version " +expected + " but found " + actual);
 		}
 	}
 
