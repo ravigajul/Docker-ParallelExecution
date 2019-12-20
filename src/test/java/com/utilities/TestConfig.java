@@ -9,7 +9,7 @@ public class TestConfig {
 	public static String server = "smtp.gmail.com";
 	public static String from = "ravi.gajul@broadcom.com";
 	public static String password = "Krishna@22";
-	public static String[] to = {"ravi.gajul@broadcom.com","habeeb.rehaman@broadcom.com","satish.nainakanti@broadcom.com"};
+	public static String[] to = {"ravi.gajul@broadcom.com"};
 	public static String subject = "Automation Test Execution Report"+"_"+sub;
 
 	public static String messageBody = "Please find the test execution report below";

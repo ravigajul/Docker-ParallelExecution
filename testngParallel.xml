@@ -7,14 +7,7 @@
 	</listeners>
 	<test name="Parallel Test">
 		<classes>
-			<class name="com.testcases.ClarityPPMHealthCheck">
-			<methods>
-				<!--  <include name="ValidateNikuLogin"/>
-				 <include name="ValidateAdvanceReporting"/>
-				 <include name="ValidateJasperSoftReport"/> -->
-				<exclude name ="ValidateHDBCluster"/>
-			</methods>
-			</class>
+			<class name="com.testcases.ClarityPPMHealthCheckTest"/>
 		</classes>
 	</test> <!-- Test -->
 </suite> <!-- Suite -->

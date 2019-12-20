@@ -33,18 +33,27 @@ import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.asserts.SoftAssert;
 
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.pages.NikuHomePage;
+import com.resources.testdata.TestConstants;
 import com.utilities.ExtentTestManager;
 import com.utilities.ExtentManager;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class TestBase {
+	
+	public static String endpointuserid;
+	public static String endpointpassword;
+	public static String endpointurl;
+	public static String authenticator;
+	public static String currentdirectorypath = System.getProperty("user.dir");
+
 
 	public static ThreadLocal<Properties> pr = new ThreadLocal<Properties>();
 	public Properties prop;
@@ -58,9 +67,9 @@ public class TestBase {
 	// ThreadLocal<WebDriverWait>();
 	public static WebDriverWait wait;
 
-	public String targetLocation;
-	public File screenshotFile;
-	public String screenShotName;
+	public static String targetLocation;
+	public static File screenshotFile;
+	public static String screenShotName;
 
 	//public Logger log = Logger.getLogger(TestBase.class);
 
@@ -69,70 +78,38 @@ public class TestBase {
 
 	public static ThreadLocal<NikuHomePage> nhp = new ThreadLocal<NikuHomePage>();
 	public NikuHomePage nikuhomepage;
-
+	
+	
 	@BeforeMethod
 	public synchronized void setUp(ITestContext context) throws IOException, InterruptedException {
 
-		// Start Docker
-		// Docker.StartDockerAndGrid();
-
-		// log
-		// log=Logger.getLogger("devpinoyLogger");
-		//PropertyConfigurator.configure("./src/test/java/com/properties/log4j.properties");
-
-		// softassert
-
-		// Properties file setup
-		
-		//log.debug("Initializing Properties and Driver");
-		String propertyfilepath = System.getProperty("user.dir");
-		File file = new File(propertyfilepath + "/src/test/java/com/properties/env.properties");
-		FileInputStream fileInput = null;
-
-		try {
-			fileInput = new FileInputStream(file);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		prop = new Properties();
-		pr.set(prop);
-		try {
-			pr.get().load(fileInput);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 		// Webdriver Setup
-
-		
+		/*
 		 WebDriverManager.chromedriver().setup(); 
-		 //WebDriverManager.getInstance(DriverManagerType.CHROME).setup();
 		 driver = new ChromeDriver();
-		 dr.set(driver); 
-		// log.debug("Chrome Driver Launched");
+		 dr.set(driver);
+		 dr.get().manage().window().maximize(); 
 		 context.setAttribute("driver", driver); 
 		 wait = new WebDriverWait(dr.get(), 30);
 		 nikuhomepage= new NikuHomePage((dr.get())); 
-		 nhp.set(nikuhomepage);
+		 nhp.set(nikuhomepage);*/
 		 
-
 		/* *********Docker Execution ********/
 
-	/*	remoteAddress = new URL("http://localhost:4444/wd/hub");
+		remoteAddress = new URL("http://localhost:4444/wd/hub");
 		url.set(remoteAddress);
 
 		ChromeOptions capabilities = new ChromeOptions(); //
 		driver = new RemoteWebDriver(url.get(), capabilities);
 		dr.set(driver);
+		dr.get().manage().window().maximize();
 
 		context.setAttribute("driver", dr.get());
 
-		wait = new WebDriverWait(driver, 30);
+		wait = new WebDriverWait(driver, 45);
 
 		nikuhomepage = new NikuHomePage((dr.get()));
-		nhp.set(nikuhomepage);*/
+		nhp.set(nikuhomepage);
 
 		/* *****************************************************************/
 
@@ -159,7 +136,7 @@ public class TestBase {
 
 	}
 
-	public synchronized String captureScreenshot(WebDriver driver) {
+	public synchronized static String captureScreenshot(WebDriver driver) {
 
 		File file;
 		File targetFile = null;
@@ -200,7 +177,7 @@ public class TestBase {
 		return reqTestClassname[i];
 	}
 
-	public synchronized void ReportStatus(String status, String msg) {
+	public synchronized static void ReportStatus(String status, String msg) {
 
 		if (status.equalsIgnoreCase("pass")) {
 
@@ -215,7 +192,7 @@ public class TestBase {
 		} else if (status.equalsIgnoreCase("info")) {
 
 			ExtentTestManager.getTest().log(Status.INFO, msg);
-		} else {
+		} else if(status.equalsIgnoreCase("pass")){
 			try {
 				ExtentTestManager.getTest().fail("Screenshot", MediaEntityBuilder
 						.createScreenCaptureFromPath("screenshots/" + captureScreenshot(dr.get())).build());
@@ -224,9 +201,31 @@ public class TestBase {
 				e.printStackTrace();
 			}
 			ExtentTestManager.getTest().log(Status.FAIL, msg);
+		}else if(status.equals("warn")) {
+			try {
+				ExtentTestManager.getTest().fail("Screenshot", MediaEntityBuilder
+						.createScreenCaptureFromPath("screenshots/" + captureScreenshot(dr.get())).build());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ExtentTestManager.getTest().log(Status.WARNING, msg);
 		}
 	}
 
+	public synchronized String FetchAttribute(WebElement element,String val)
+	{
+		wait.until(ExpectedConditions.visibilityOf(element));
+		return element.getAttribute(val);
+	}
+	
+	public synchronized String FetchInnerText(WebElement element)
+	{
+		wait.until(ExpectedConditions.visibilityOf(element));
+		return element.getText();
+	}
+	
+	
 	public synchronized void sendKeys(WebElement element, String value) {
 		if (isElementPresent(element)) {
 			ExtentTestManager.getTest().log(Status.INFO, "Entered the value " + value + " in " + element.getText());
@@ -248,14 +247,18 @@ public class TestBase {
 				ReportStatus("info", "clicked the element " + elementText);
 				System.out.println("clicked " + elementText);
 			} catch (ElementClickInterceptedException eie) {
-				TimeUnit.SECONDS.sleep(20);
+				TimeUnit.SECONDS.sleep(2);
+				wait.until(ExpectedConditions.elementToBeClickable(element));
 				element.click();
 				System.out.println("Clicked " + elementText + " from Intercepted Exception");
 			} catch (StaleElementReferenceException sere) {
-				TimeUnit.SECONDS.sleep(20);
+				TimeUnit.SECONDS.sleep(2);
+				wait.until(ExpectedConditions.elementToBeClickable(element));
+				element.click();
 				System.out.println("Clicked " + elementText + " from Stale Element Reference Exception");
 			} catch (NoSuchElementException nee) {
-				TimeUnit.SECONDS.sleep(20);
+				TimeUnit.SECONDS.sleep(2);
+				wait.until(ExpectedConditions.elementToBeClickable(element));
 				element.click();
 				System.out.println("Clicked " + elementText + " from No Such Element Exception");
 			} catch (Exception e) {
@@ -315,13 +318,6 @@ public class TestBase {
 		}
 	}
 
-	/*
-	 * public void reportPass(String msg) { captureScreenshot(driver,result);
-	 * ExtentTestManager.getTest().fail("Screenshot",
-	 * MediaEntityBuilder.createScreenCaptureFromPath(
-	 * "screenshots/ClarityPPMHealthCheck/"+screenShotName).build());
-	 * ExtentTestManager.getTest().log(Status.PASS, msg); }
-	 */
 
 	public synchronized boolean isElementPresent(WebElement element) {
 		try {
@@ -335,7 +331,7 @@ public class TestBase {
 		}
 
 	}
-
+	
 	@AfterMethod
 	public synchronized void teardown() {
 		if (dr.get() != null) {
