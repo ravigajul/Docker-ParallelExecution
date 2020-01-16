@@ -6,34 +6,21 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.sound.sampled.Port;
-
 import org.openqa.selenium.By;
-import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindAll;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-import org.testng.asserts.SoftAssert;
 
-import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.resources.testdata.TestConstants;
 import com.testcases.TestBase;
-import com.utilities.ExtentManager;
 import com.utilities.ExtentTestManager;
 import com.utilities.RestUtil;
 
@@ -44,7 +31,6 @@ public class NikuHomePage extends TestBase {
 	private Date dLastRun;
 	private String sLatestRun;
 	private Date dLatestRun;
-
 	@FindBy(how = How.ID, using = "ppm_login_username")
 	private WebElement userName;
 
@@ -111,8 +97,20 @@ public class NikuHomePage extends TestBase {
 	@FindBy(how = How.ID, using = "ppm_refresh")
 	private WebElement ppmrefreshbtn;
 
-	@FindAll(@FindBy(how = How.CSS, using = "li#main_library>p.wrap.button"))
+	@FindBy(how = How.CSS, using = "li#main_library>p.wrap.button")
 	private WebElement librarytab;
+	
+	@FindBy(how = How.XPATH, using = "//a[contains(text(),'CA PPM')]")
+	private WebElement dbconnectioncappm;
+	
+	@FindBy(how = How.XPATH, using = "//li[@id='resultsList_item8']//a[contains(text(),'Data Warehouse')]")
+	private WebElement dbconnectiondatawarehouse;
+	
+	
+	
+	@FindBy(how = How.CSS, using = "g.raphael-group-21-dataset text tspan")
+	private WebElement dataconnectionstatus;
+	
 
 	@FindBy(how = How.CSS, using = "p.message:nth-child(1)")
 	private WebElement message;
@@ -188,10 +186,11 @@ public class NikuHomePage extends TestBase {
 	@FindBy(how = How.LINK_TEXT, using = "PPM Schema")
 	private WebElement ppmschema;
 
-	@FindBy(how = How.LINK_TEXT, using = "CMN_DB_HISTORY")
+	
+	@FindBy(how = How.LINK_TEXT, using = "cmn_db_history")
 	private WebElement cmndbhistory;
 
-	@FindBy(how = How.LINK_TEXT, using = "API_CLIENT")
+	@FindBy(how = How.LINK_TEXT, using = "api_client")
 	private WebElement apiclient;
 
 	@FindBy(how = How.LINK_TEXT, using = "Last Run")
@@ -221,7 +220,7 @@ public class NikuHomePage extends TestBase {
 		 * 30); PageFactory.initElements(factory, this);
 		 */
 		PageFactory.initElements(dr.get(), this);
-		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
 	}
 
@@ -231,10 +230,10 @@ public class NikuHomePage extends TestBase {
 		// log.debug("Inside Niku Login");
 		dr.get().get(testurl);
 		ExtentTestManager.getTest().log(Status.INFO, "Launched niku url "+testurl);
-		wait.until(ExpectedConditions.visibilityOf(this.userName));
+		WaitForElement(ExpectedConditions.visibilityOf(this.userName));
 		System.out.println(dr.get().getTitle());
 		sendKeys(this.userName, userName);
-		sendKeys(this.password, password);
+		sendKeyswithoutreportingvalue(this.password, password);
 		click(this.loginbtn);
 		verifyElement(this.logout);
 
@@ -265,8 +264,9 @@ public class NikuHomePage extends TestBase {
 					TimeUnit.SECONDS.sleep(2);
 					wait.until((ExpectedConditions.invisibilityOf(this.loading)));
 					ReportStatus("pass", "****Learn link validated successfully****");
-					Assert.assertTrue(dr.get().getTitle().contains("trainer"),
-							"title displayed is " + dr.get().getTitle());
+					verifyTrue(dr.get().getTitle().contains("trainer"));
+					/*Assert.assertTrue(dr.get().getTitle().contains("trainer"),
+							"title displayed is " + dr.get().getTitle());*/
 					dr.get().close();
 					System.out.println("Learn Link Validated Successfully");
 					flag = "true";
@@ -324,14 +324,14 @@ public class NikuHomePage extends TestBase {
 		ExtentTestManager.getTest().log(Status.INFO, "Validating last run time slices for initial time");
 		click(this.admintab);
 		ExtentTestManager.getTest().log(Status.INFO, "Clicked Admin tab");
-		wait.until(ExpectedConditions.visibilityOf(this.timeslices));
+		WaitForElement(ExpectedConditions.visibilityOf(this.timeslices));
 		this.timeslices.click();
 		ExtentTestManager.getTest().log(Status.INFO, "Clicked TimeSlices");
 		TimeUnit.SECONDS.sleep(2);
-		wait.until(ExpectedConditions.visibilityOf(this.lastrun));
+		WaitForElement(ExpectedConditions.visibilityOf(this.lastrun));
 		sLastRun = this.tablerows.get(1).findElements(By.tagName("td")).get(10).getText();
 		dLastRun = new SimpleDateFormat("MM/dd/yy hh:mm a").parse(sLastRun);
-		wait.until(ExpectedConditions.visibilityOf(this.ppmrefreshbtn));
+		WaitForElement(ExpectedConditions.visibilityOf(this.ppmrefreshbtn));
 		ReportStatus("info", "***Initial time slice captured " + dLastRun + "****");
 	}
 
@@ -340,15 +340,16 @@ public class NikuHomePage extends TestBase {
 		ExtentTestManager.getTest().log(Status.INFO, "Validating last run time slices for final time");
 		click(this.admintab);
 		ExtentTestManager.getTest().log(Status.INFO, "Clicked Admin tab");
-		wait.until(ExpectedConditions.visibilityOf(this.timeslices));
+		WaitForElement(ExpectedConditions.visibilityOf(this.timeslices));
 		this.timeslices.click();
 		ExtentTestManager.getTest().log(Status.INFO, "Clicked TimeSlices");
 		// TimeUnit.SECONDS.sleep(3);
 		wait.until(ExpectedConditions.visibilityOf(this.lastrun));
 		sLatestRun = this.tablerows.get(1).findElements(By.tagName("td")).get(10).getText();
 		dLatestRun = new SimpleDateFormat("MM/dd/yy hh:mm a").parse(sLatestRun);
-		Assert.assertTrue(dLatestRun.compareTo(dLastRun) > 0,
-				"Latest Run is " + sLatestRun + " Last Run is " + sLastRun);
+		verifyTrue(dLatestRun.compareTo(dLastRun) > 0);
+		/*Assert.assertTrue(dLatestRun.compareTo(dLastRun) > 0,
+				"Latest Run is " + sLatestRun + " Last Run is " + sLastRun);*/
 		if (dLatestRun.compareTo(dLastRun) > 0) {
 			ReportStatus("pass", "****TimeSlices validated successfully Latest Run is " + sLatestRun + " Last Run is "
 					+ sLastRun + "****");
@@ -366,31 +367,31 @@ public class NikuHomePage extends TestBase {
 		if (isElementPresent(this.processengines)) {
 			click(this.processengines);
 			TimeUnit.SECONDS.sleep(2);
-			wait.until(ExpectedConditions.visibilityOf(this.processenginestitle));
+			WaitForElement(ExpectedConditions.visibilityOf(this.processenginestitle));
 			wait.until(ExpectedConditions.visibilityOfAllElements(this.tablerows));
 			processenginerows = this.tablerows;
 			System.out.println("Process Engine Rows " + processenginerows.size());
 			for (WebElement processenginerow : processenginerows) {
 				processenginestatuscolor = processenginerow.findElements(By.tagName("td")).get(7)
 						.findElement(By.tagName("img")).getAttribute("name");
-				Assert.assertTrue(
+				verifyTrue(processenginestatuscolor.equalsIgnoreCase("DiamondYellow")
+								| processenginestatuscolor.equalsIgnoreCase("DiamondRed")
+								| processenginestatuscolor.equalsIgnoreCase("DiamondGrey"));
+				/*Assert.assertTrue(
 						processenginestatuscolor.equalsIgnoreCase("DiamondYellow")
 								| processenginestatuscolor.equalsIgnoreCase("DiamondRed")
 								| processenginestatuscolor.equalsIgnoreCase("DiamondGrey"),
-						"The status colore displayed is " + processenginestatuscolor);
+						"The status colore displayed is " + processenginestatuscolor);*/
 				if (processenginestatuscolor.equalsIgnoreCase("DiamondYellow")
 						| processenginestatuscolor.equalsIgnoreCase("DiamondRed")
 						| processenginestatuscolor.equalsIgnoreCase("DiamondGrey")) {
 					ReportStatus("pass", "****The status color displayed is " + processenginestatuscolor + "****");
 					System.out.println("****Process Engine colors validated successfully");
 				} else {
-					ReportStatus("fail", "****The status color displayed is " + processenginestatuscolor + "****");
-				}
-
+					ReportStatus("fail", "***The process Engines link is not displayed****");
 			}
 		}
-		ReportStatus("fail", "***The process Engines link is not displayed****");
-
+		}
 	}
 
 	public synchronized void checkContentAddinStatus() throws InterruptedException, IOException {
@@ -400,16 +401,19 @@ public class NikuHomePage extends TestBase {
 		String contentaddinstatus;
 		click(this.admintab);
 		click(this.contentaddins);
-		wait.until(ExpectedConditions.visibilityOf(this.contentaddinstitle));
+		WaitForElement(ExpectedConditions.visibilityOf(this.contentaddinstitle));
 		contentaddinsrows = this.tablerows;
 		for (WebElement contentaddinsrow : contentaddinsrows) {
 
 			contentaddinstatus = contentaddinsrow.findElements(By.tagName("td")).get(5).getText();
-			Assert.assertTrue(
+			verifyTrue(contentaddinstatus.equalsIgnoreCase("Installed")
+							| contentaddinstatus.equalsIgnoreCase("Upgrade Ready")
+							| contentaddinstatus.equalsIgnoreCase("Upgrade Pending"));
+			/*Assert.assertTrue(
 					contentaddinstatus.equalsIgnoreCase("Installed")
 							| contentaddinstatus.equalsIgnoreCase("Upgrade Ready")
 							| contentaddinstatus.equalsIgnoreCase("Upgrade Pending"),
-					"The content addins status displayed is " + contentaddinstatus);
+					"The content addins status displayed is " + contentaddinstatus);*/
 
 			if (contentaddinstatus.equalsIgnoreCase("Installed") | contentaddinstatus.equalsIgnoreCase("Upgrade Ready")
 					| contentaddinstatus.equalsIgnoreCase("Upgrade Pending")) {
@@ -430,9 +434,9 @@ public class NikuHomePage extends TestBase {
 		String status;
 		String type;
 		click(this.admintab);
-		wait.until(ExpectedConditions.visibilityOf(this.resources));
+		WaitForElement(ExpectedConditions.visibilityOf(this.resources));
 		click(this.resources);
-		wait.until(ExpectedConditions.visibilityOf(this.resourcestitle));
+		WaitForElement(ExpectedConditions.visibilityOf(this.resourcestitle));
 		wait.until(ExpectedConditions.visibilityOfAllElements(this.tablerows));
 		resourcerows = this.tablerows;
 		for (WebElement resourcerow : resourcerows) {
@@ -442,8 +446,10 @@ public class NikuHomePage extends TestBase {
 
 				status = resourcerow.findElements(By.tagName("td")).get(7).getText();
 				type = resourcerow.findElements(By.tagName("td")).get(6).getText();
-				Assert.assertTrue(status.equalsIgnoreCase("Active"), "The status displayed is " + status);
-				Assert.assertTrue(type.equalsIgnoreCase("Internal"), "The type displayed is " + type);
+				verifyTrue(status.equalsIgnoreCase("Active"));
+				verifyTrue(type.equalsIgnoreCase("Internal"));
+				/*Assert.assertTrue(status.equalsIgnoreCase("Active"), "The status displayed is " + status);
+				Assert.assertTrue(type.equalsIgnoreCase("Internal"), "The type displayed is " + type);*/
 				System.out.println("****Resources Validated successfully****");
 				ReportStatus("pass", "****Resources validated successfully****");
 			}
@@ -458,7 +464,7 @@ public class NikuHomePage extends TestBase {
 		ExtentTestManager.getTest().log(Status.INFO, "Validating Advance Reporting");
 		int i;
 		int rows;
-		wait.until(ExpectedConditions.visibilityOf(this.hometab));
+		WaitForElement(ExpectedConditions.visibilityOf(this.hometab));
 		click(this.hometab);
 		click(this.advancedreporting);
 		TimeUnit.SECONDS.sleep(5);
@@ -466,14 +472,15 @@ public class NikuHomePage extends TestBase {
 		dr.get().switchTo().frame(this.jasperframe);
 		click(this.librarytab);
 		TimeUnit.SECONDS.sleep(2);
-		wait.until(ExpectedConditions.visibilityOf(this.resultsList));
+		WaitForElement(ExpectedConditions.visibilityOf(this.resultsList));
 		rows = this.descriptions.size();
 		System.out.println("Advance Reporting Rows " + rows);
 		List<WebElement> descriptions = this.descriptions;
 		for (i = 2; i < (rows / 2); i = i + 2) {
 			System.out.println("****" + i + descriptions.get(i).getText());
-			Assert.assertTrue(descriptions.get(i).getText().contains("PMO Accelerator"),
-					"The Description had " + descriptions.get(i).getText());
+			verifyTrue(descriptions.get(i).getText().contains("PMO Accelerator"));
+			/*Assert.assertTrue(descriptions.get(i).getText().contains("PMO Accelerator"),
+					"The Description had " + descriptions.get(i).getText());*/
 		}
 		System.out.println("****Advance Report Validated successfully****");
 		ReportStatus("pass", "****Advance Reporting validate successfully****");
@@ -481,16 +488,18 @@ public class NikuHomePage extends TestBase {
 
 	public synchronized void checkDatawarehouseSchema() throws InterruptedException, IOException {
 		// log.debug("inside validate jaspersoft report");
-		ExtentTestManager.getTest().log(Status.INFO, "Datawarehouse schema jasper soft report");
+		ExtentTestManager.getTest().log(Status.INFO, "Datawarehouse schema report");
+		System.out.println("validating data ware house schema");
 		click(this.datawarehouseschema);
-		// wait.until(ExpectedConditions.visibilityOf(this.message));
+		TimeUnit.SECONDS.sleep(2);
+		WaitForElement(ExpectedConditions.visibilityOf(this.message));
 		TimeUnit.SECONDS.sleep(2);
 		click(this.cmndbhistory);
 		TimeUnit.SECONDS.sleep(2);
 		click(this.applybtn);
-		wait.until(ExpectedConditions.visibilityOf(this.apiclientresult));
-		verifyEquals(m, "CMN_DB_HISTORY", this.apiclientresult.getText().trim());
-		dr.get().switchTo().defaultContent();
+		WaitForElement(ExpectedConditions.visibilityOf(this.apiclientresult));
+		verifyEquals(m, "cmn_db_history", this.apiclientresult.getText().trim());
+	//	dr.get().switchTo().defaultContent();
 		System.out.println("****Datawarehouse schema validation is complete****");
 		ReportStatus("pass", "****Datawarehouse schema validated successfully****");
 	}
@@ -498,28 +507,68 @@ public class NikuHomePage extends TestBase {
 	public synchronized void checkPPMSchema() throws InterruptedException, IOException {
 		// log.debug("inside validate jaspersoft report");
 		ExtentTestManager.getTest().log(Status.INFO, "PPMSchema  report");
+		/*System.out.println("Validating ppm schema");
 		click(this.hometab);
 		click(this.advancedreporting);
 		TimeUnit.SECONDS.sleep(10);
 		isElementPresent((this.jasperframe));
-		dr.get().switchTo().frame(this.jasperframe);
+		dr.get().switchTo().frame(this.jasperframe);*/
 		click(this.librarytab);
-		// wait.until(ExpectedConditions.visibilityOf(this.message));
 		TimeUnit.SECONDS.sleep(2);
 		click(this.ppmschema);
 		TimeUnit.SECONDS.sleep(2);
+		WaitForElement(ExpectedConditions.visibilityOf(this.message));
 		click(this.apiclient);
 		TimeUnit.SECONDS.sleep(2);
 		click(this.applybtn);
-		wait.until(ExpectedConditions.visibilityOf(this.apiclientresult));
-		verifyEquals(m, "API_CLIENT", this.apiclientresult.getText().trim());
-		dr.get().switchTo().defaultContent();
+		WaitForElement(ExpectedConditions.visibilityOf(this.apiclientresult));
+		verifyEquals(m, "api_client", this.apiclientresult.getText().trim());
 		System.out.println("****PPM  schema validation is complete****");
 		ReportStatus("pass", "****PPM schema validated successfully****");
 	}
 
-	public void ValidateHDBCluster() throws InterruptedException, IOException {
+	public synchronized void CheckDBConnectionCAPPM() throws InterruptedException, IOException {
+		// log.debug("inside validate jaspersoft report");
+		/*ExtentTestManager.getTest().log(Status.INFO, "CA PPM DB Connection  report");
+		System.out.println("Validating CA PPM DB Connection");
+		click(this.hometab);
+		click(this.advancedreporting);
+		TimeUnit.SECONDS.sleep(10);
+		isElementPresent((this.jasperframe));
+		dr.get().switchTo().frame(this.jasperframe);*/
+		click(this.librarytab);
+		TimeUnit.SECONDS.sleep(2);
+		click(this.dbconnectioncappm);
+		TimeUnit.SECONDS.sleep(2);
+		WaitForElement(ExpectedConditions.visibilityOf(this.dataconnectionstatus));
+		verifyEquals(m, "Normal", this.dataconnectionstatus.getText().trim());
+		ReportStatus("pass", "****CA PPM DB connection is validated successfully****");
+	}
+	
+
+	public synchronized void CheckDBConnectionDWS() throws InterruptedException, IOException {
+		// log.debug("inside validate jaspersoft report");
+		ExtentTestManager.getTest().log(Status.INFO, "DWS DB Connection  report");
+		/*System.out.println("Validating DWS DB Connection");
+		click(this.hometab);
+		click(this.advancedreporting);
+		TimeUnit.SECONDS.sleep(10);
+		isElementPresent((this.jasperframe));
+		dr.get().switchTo().frame(this.jasperframe);*/
+		click(this.librarytab);
+		TimeUnit.SECONDS.sleep(2);
+		click(this.dbconnectiondatawarehouse);
+		TimeUnit.SECONDS.sleep(2);
+		WaitForElement(ExpectedConditions.visibilityOf(this.dataconnectionstatus));
+		verifyEquals(m, "Normal", this.dataconnectionstatus.getText().trim());
+		ReportStatus("pass", "****DWS DB connection is validated successfully****");
+		dr.get().switchTo().defaultContent();
+	}
+	
+
+	public void ValidateHDPCluster() throws InterruptedException, IOException {
 		ExtentTestManager.getTest().log(Status.INFO, "Validating HDP cluster");
+		System.out.println("Validating HDP Cluster");
 		// first line to be comments later just for running individually
 		// nhp.get().nikuLogin(pr.get().getProperty("nikuurl"), "rg030672",
 		// "Welcome123!");
@@ -548,6 +597,8 @@ public class NikuHomePage extends TestBase {
 				System.out.println("****HDP is not configured to this instance****");
 				ReportStatus("warn","****HDP is not configured to this instance****");
 			}
+		}else {
+			ReportStatus("warn","****HDP is not configured to this instance****");			
 		}
 
 	}
@@ -555,7 +606,7 @@ public class NikuHomePage extends TestBase {
 	public synchronized void LogOut() {
 		dr.get().switchTo().defaultContent();
 		this.logout.click();
-		wait.until(ExpectedConditions.visibilityOf(this.userName));
+		WaitForElement(ExpectedConditions.visibilityOf(this.userName));
 		System.out.println("***Logged Out Successfully****");
 		ReportStatus("pass", "****Logged out Successfully****");
 

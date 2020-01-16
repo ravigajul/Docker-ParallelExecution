@@ -1,32 +1,22 @@
 package com.utilities;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 
 import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.io.FileHandler;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
-import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
-import com.aventstack.extentreports.markuputils.ExtentColor;
-import com.aventstack.extentreports.markuputils.MarkupHelper;
 import com.testcases.TestBase;
 
 public class TestListener extends TestBase implements ITestListener, ISuiteListener {
@@ -63,7 +53,7 @@ public class TestListener extends TestBase implements ITestListener, ISuiteListe
 		
 		try {
 			messageBody = "Hi All,"+"<br><br>"+" Please find the Test Execution Report Below"+"<br>"+ "http://" + InetAddress.getLocalHost().getHostAddress()
-					+ ":8000/TestReport/"+new Date().toString().replace(":","").replace(" ","")+"_Test-Automaton-Report.html"+"<br><br><br>"+ "Regards,"+"<br>"+"HealthCheck Automation";
+					+ ":8000/TestReport/Test-Automaton-Report.html"+"<br><br><br>"+ "Regards,"+"<br>"+"HealthCheck Automation";
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -88,7 +78,7 @@ public class TestListener extends TestBase implements ITestListener, ISuiteListe
 	public synchronized void onTestSuccess(ITestResult result) {
 		System.out.println("****Executed " + result.getMethod().getMethodName() + " test successfully****");
 		ITestContext context = result.getTestContext();
-		WebDriver driver = (WebDriver) context.getAttribute("driver");
+		driver = (WebDriver) context.getAttribute("driver");
 		ReportStatus("pass", "****" + result.getMethod().getMethodName() + " Passed****");
 	}
 
@@ -97,7 +87,7 @@ public class TestListener extends TestBase implements ITestListener, ISuiteListe
 		System.out.println((result.getMethod().getMethodName() + " failed!"));
 
 		ITestContext context = result.getTestContext();
-		WebDriver driver = (WebDriver) context.getAttribute("driver");
+		driver = (WebDriver) context.getAttribute("driver");
 		ReportStatus("fail", result.getThrowable() + " failed");
 //		try {
 //			ExtentTestManager.getTest().fail("Screenshot", MediaEntityBuilder

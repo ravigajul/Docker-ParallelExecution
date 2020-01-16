@@ -1,8 +1,6 @@
 package com.resources.json;
 
-import java.util.Map;
 
-import com.google.gson.annotations.JsonAdapter;
 
 public class Pe_HeartBeat {
 	String value;

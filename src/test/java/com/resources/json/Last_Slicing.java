@@ -1,7 +1,5 @@
 package com.resources.json;
 
-import java.util.Map;
-
 public class Last_Slicing {
 	
 	String value;

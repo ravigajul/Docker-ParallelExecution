@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -15,7 +14,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
 import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -282,7 +280,7 @@ public class ExcelReader {
 	        cell = row.createCell(colNum);
 			
 	    cell.setCellValue(data);
-	    XSSFCreationHelper createHelper = workbook.getCreationHelper();
+	    //XSSFCreationHelper createHelper = workbook.getCreationHelper();
 
 	    //cell style for hyperlinks
 	    
@@ -403,7 +401,7 @@ public class ExcelReader {
 		sheet=workbook.getSheet(sheetName);
 		XSSFCellStyle style = workbook.createCellStyle();
 		//style.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
-		XSSFCreationHelper createHelper = workbook.getCreationHelper();
+		//XSSFCreationHelper createHelper = workbook.getCreationHelper();
 		//style.setFillPattern(HSSFCellStyle.NO_FILL);
 		
 	    

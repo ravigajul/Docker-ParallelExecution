@@ -5,8 +5,6 @@ import java.util.Map;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.markuputils.ExtentColor;
-import com.aventstack.extentreports.markuputils.MarkupHelper;
 
 public class ExtentTestManager {
 	static Map<Integer, ExtentTest> extentTestMap = new HashMap<Integer, ExtentTest>();
