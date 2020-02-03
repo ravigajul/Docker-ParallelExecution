@@ -3,6 +3,7 @@ package com.utilities;
 import java.io.IOException;
 import java.util.Properties;
 
+
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Folder;
@@ -19,7 +20,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import com.resources.testdata.TestConstants;
 
 public class MonitoringMail {
 	// public static void sendMail(String mailServer, String from,String username,
@@ -27,7 +27,7 @@ public class MonitoringMail {
 	// String attachmentPath, String attachmentName) throws MessagingException,
 	// AddressException
 	public void sendMail(String mailServer, String from, String[] to, String subject, String messageBody)
-			throws MessagingException, AddressException {
+			throws MessagingException, AddressException, IOException {
 		boolean debug = false;
 		Properties props = new Properties();
 		props.put("mail.smtp.starttls.enable", "true");
@@ -69,13 +69,14 @@ public class MonitoringMail {
 			// body.setText(messageBody);
 			body.setContent(messageBody, "text/html");
 
-			// BodyPart attachment = new MimeBodyPart();
-			// DataSource source = new FileDataSource(attachmentPath);
-			// attachment.setDataHandler(new DataHandler(source));
-			// attachment.setFileName(attachmentName);
+			BodyPart attachment = new MimeBodyPart();
+//			DataSource source = new FileDataSource(attachmentPath);
+//			attachment.setDataHandler(new DataHandler(source));
+			String attachmentPath=System.getProperty("user.dir")+"/TestReport.zip";
+			((MimeBodyPart) attachment).attachFile(attachmentPath);
 			MimeMultipart multipart = new MimeMultipart();
 			multipart.addBodyPart(body);
-			// multipart.addBodyPart(attachment);
+			multipart.addBodyPart(attachment);
 			message.setContent(multipart);
 			Transport.send(message);
 			System.out.println("Sucessfully Sent mail to All Users");

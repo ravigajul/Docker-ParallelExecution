@@ -99,18 +99,15 @@ public class NikuHomePage extends TestBase {
 
 	@FindBy(how = How.CSS, using = "li#main_library>p.wrap.button")
 	private WebElement librarytab;
-	
+
 	@FindBy(how = How.XPATH, using = "//a[contains(text(),'CA PPM')]")
 	private WebElement dbconnectioncappm;
-	
+
 	@FindBy(how = How.XPATH, using = "//li[@id='resultsList_item8']//a[contains(text(),'Data Warehouse')]")
 	private WebElement dbconnectiondatawarehouse;
-	
-	
-	
+
 	@FindBy(how = How.CSS, using = "g.raphael-group-21-dataset text tspan")
 	private WebElement dataconnectionstatus;
-	
 
 	@FindBy(how = How.CSS, using = "p.message:nth-child(1)")
 	private WebElement message;
@@ -186,7 +183,6 @@ public class NikuHomePage extends TestBase {
 	@FindBy(how = How.LINK_TEXT, using = "PPM Schema")
 	private WebElement ppmschema;
 
-	
 	@FindBy(how = How.LINK_TEXT, using = "cmn_db_history")
 	private WebElement cmndbhistory;
 
@@ -229,7 +225,7 @@ public class NikuHomePage extends TestBase {
 		ExtentTestManager.getTest().log(Status.INFO, "Validating login");
 		// log.debug("Inside Niku Login");
 		dr.get().get(testurl);
-		ExtentTestManager.getTest().log(Status.INFO, "Launched niku url "+testurl);
+		ExtentTestManager.getTest().log(Status.INFO, "Launched niku url " + testurl);
 		WaitForElement(ExpectedConditions.visibilityOf(this.userName));
 		System.out.println(dr.get().getTitle());
 		sendKeys(this.userName, userName);
@@ -265,8 +261,10 @@ public class NikuHomePage extends TestBase {
 					wait.until((ExpectedConditions.invisibilityOf(this.loading)));
 					ReportStatus("pass", "****Learn link validated successfully****");
 					verifyTrue(dr.get().getTitle().contains("trainer"));
-					/*Assert.assertTrue(dr.get().getTitle().contains("trainer"),
-							"title displayed is " + dr.get().getTitle());*/
+					/*
+					 * Assert.assertTrue(dr.get().getTitle().contains("trainer"),
+					 * "title displayed is " + dr.get().getTitle());
+					 */
 					dr.get().close();
 					System.out.println("Learn Link Validated Successfully");
 					flag = "true";
@@ -301,8 +299,8 @@ public class NikuHomePage extends TestBase {
 		// log.debug("Inside Check Build Version");
 		ExtentTestManager.getTest().log(Status.INFO, "Validating build version");
 		verifyEquals(m, TestConstants.BUILD_VERSION, this.aboutinformation.get(1).getText());
-		if(isElementPresent(this.aboutclosebtn)) {
-				click(this.aboutclosebtn);
+		if (isElementPresent(this.aboutclosebtn)) {
+			click(this.aboutclosebtn);
 		}
 
 	}
@@ -314,9 +312,9 @@ public class NikuHomePage extends TestBase {
 		jse.executeScript("arguments[0].scrollIntoView()", this.aboutinformation.get(7));
 		Thread.sleep(2);
 		verifyEquals(m, TestConstants.JASPERSOFT_VERSION, this.aboutinformation.get(7).getText());
-		if(isElementPresent(this.aboutclosebtn)) {
+		if (isElementPresent(this.aboutclosebtn)) {
 			click(this.aboutclosebtn);
-	}
+		}
 	}
 
 	public synchronized void checkLastRunTimeSlicesInitialTime() throws ParseException, InterruptedException {
@@ -348,8 +346,10 @@ public class NikuHomePage extends TestBase {
 		sLatestRun = this.tablerows.get(1).findElements(By.tagName("td")).get(10).getText();
 		dLatestRun = new SimpleDateFormat("MM/dd/yy hh:mm a").parse(sLatestRun);
 		verifyTrue(dLatestRun.compareTo(dLastRun) > 0);
-		/*Assert.assertTrue(dLatestRun.compareTo(dLastRun) > 0,
-				"Latest Run is " + sLatestRun + " Last Run is " + sLastRun);*/
+		/*
+		 * Assert.assertTrue(dLatestRun.compareTo(dLastRun) > 0, "Latest Run is " +
+		 * sLatestRun + " Last Run is " + sLastRun);
+		 */
 		if (dLatestRun.compareTo(dLastRun) > 0) {
 			ReportStatus("pass", "****TimeSlices validated successfully Latest Run is " + sLatestRun + " Last Run is "
 					+ sLastRun + "****");
@@ -375,13 +375,14 @@ public class NikuHomePage extends TestBase {
 				processenginestatuscolor = processenginerow.findElements(By.tagName("td")).get(7)
 						.findElement(By.tagName("img")).getAttribute("name");
 				verifyTrue(processenginestatuscolor.equalsIgnoreCase("DiamondYellow")
-								| processenginestatuscolor.equalsIgnoreCase("DiamondRed")
-								| processenginestatuscolor.equalsIgnoreCase("DiamondGrey"));
-				/*Assert.assertTrue(
-						processenginestatuscolor.equalsIgnoreCase("DiamondYellow")
-								| processenginestatuscolor.equalsIgnoreCase("DiamondRed")
-								| processenginestatuscolor.equalsIgnoreCase("DiamondGrey"),
-						"The status colore displayed is " + processenginestatuscolor);*/
+						| processenginestatuscolor.equalsIgnoreCase("DiamondRed")
+						| processenginestatuscolor.equalsIgnoreCase("DiamondGrey"));
+				/*
+				 * Assert.assertTrue( processenginestatuscolor.equalsIgnoreCase("DiamondYellow")
+				 * | processenginestatuscolor.equalsIgnoreCase("DiamondRed") |
+				 * processenginestatuscolor.equalsIgnoreCase("DiamondGrey"),
+				 * "The status colore displayed is " + processenginestatuscolor);
+				 */
 				if (processenginestatuscolor.equalsIgnoreCase("DiamondYellow")
 						| processenginestatuscolor.equalsIgnoreCase("DiamondRed")
 						| processenginestatuscolor.equalsIgnoreCase("DiamondGrey")) {
@@ -389,8 +390,8 @@ public class NikuHomePage extends TestBase {
 					System.out.println("****Process Engine colors validated successfully");
 				} else {
 					ReportStatus("fail", "***The process Engines link is not displayed****");
+				}
 			}
-		}
 		}
 	}
 
@@ -407,13 +408,14 @@ public class NikuHomePage extends TestBase {
 
 			contentaddinstatus = contentaddinsrow.findElements(By.tagName("td")).get(5).getText();
 			verifyTrue(contentaddinstatus.equalsIgnoreCase("Installed")
-							| contentaddinstatus.equalsIgnoreCase("Upgrade Ready")
-							| contentaddinstatus.equalsIgnoreCase("Upgrade Pending"));
-			/*Assert.assertTrue(
-					contentaddinstatus.equalsIgnoreCase("Installed")
-							| contentaddinstatus.equalsIgnoreCase("Upgrade Ready")
-							| contentaddinstatus.equalsIgnoreCase("Upgrade Pending"),
-					"The content addins status displayed is " + contentaddinstatus);*/
+					| contentaddinstatus.equalsIgnoreCase("Upgrade Ready")
+					| contentaddinstatus.equalsIgnoreCase("Upgrade Pending"));
+			/*
+			 * Assert.assertTrue( contentaddinstatus.equalsIgnoreCase("Installed") |
+			 * contentaddinstatus.equalsIgnoreCase("Upgrade Ready") |
+			 * contentaddinstatus.equalsIgnoreCase("Upgrade Pending"),
+			 * "The content addins status displayed is " + contentaddinstatus);
+			 */
 
 			if (contentaddinstatus.equalsIgnoreCase("Installed") | contentaddinstatus.equalsIgnoreCase("Upgrade Ready")
 					| contentaddinstatus.equalsIgnoreCase("Upgrade Pending")) {
@@ -448,8 +450,12 @@ public class NikuHomePage extends TestBase {
 				type = resourcerow.findElements(By.tagName("td")).get(6).getText();
 				verifyTrue(status.equalsIgnoreCase("Active"));
 				verifyTrue(type.equalsIgnoreCase("Internal"));
-				/*Assert.assertTrue(status.equalsIgnoreCase("Active"), "The status displayed is " + status);
-				Assert.assertTrue(type.equalsIgnoreCase("Internal"), "The type displayed is " + type);*/
+				/*
+				 * Assert.assertTrue(status.equalsIgnoreCase("Active"),
+				 * "The status displayed is " + status);
+				 * Assert.assertTrue(type.equalsIgnoreCase("Internal"), "The type displayed is "
+				 * + type);
+				 */
 				System.out.println("****Resources Validated successfully****");
 				ReportStatus("pass", "****Resources validated successfully****");
 			}
@@ -478,9 +484,12 @@ public class NikuHomePage extends TestBase {
 		List<WebElement> descriptions = this.descriptions;
 		for (i = 2; i < (rows / 2); i = i + 2) {
 			System.out.println("****" + i + descriptions.get(i).getText());
-			verifyTrue(descriptions.get(i).getText().contains("PMO Accelerator"));
-			/*Assert.assertTrue(descriptions.get(i).getText().contains("PMO Accelerator"),
-					"The Description had " + descriptions.get(i).getText());*/
+			 verifyTrue(descriptions.get(i).getText().contains("PMO Accelerator")|| descriptions.get(i).getText().contains("APM"));
+			
+			/*
+			 * Assert.assertTrue(descriptions.get(i).getText().contains("PMO Accelerator"),
+			 * "The Description had " + descriptions.get(i).getText());
+			 */
 		}
 		System.out.println("****Advance Report Validated successfully****");
 		ReportStatus("pass", "****Advance Reporting validate successfully****");
@@ -499,7 +508,7 @@ public class NikuHomePage extends TestBase {
 		click(this.applybtn);
 		WaitForElement(ExpectedConditions.visibilityOf(this.apiclientresult));
 		verifyEquals(m, "cmn_db_history", this.apiclientresult.getText().trim());
-	//	dr.get().switchTo().defaultContent();
+		// dr.get().switchTo().defaultContent();
 		System.out.println("****Datawarehouse schema validation is complete****");
 		ReportStatus("pass", "****Datawarehouse schema validated successfully****");
 	}
@@ -507,12 +516,12 @@ public class NikuHomePage extends TestBase {
 	public synchronized void checkPPMSchema() throws InterruptedException, IOException {
 		// log.debug("inside validate jaspersoft report");
 		ExtentTestManager.getTest().log(Status.INFO, "PPMSchema  report");
-		/*System.out.println("Validating ppm schema");
-		click(this.hometab);
-		click(this.advancedreporting);
-		TimeUnit.SECONDS.sleep(10);
-		isElementPresent((this.jasperframe));
-		dr.get().switchTo().frame(this.jasperframe);*/
+		/*
+		 * System.out.println("Validating ppm schema"); click(this.hometab);
+		 * click(this.advancedreporting); TimeUnit.SECONDS.sleep(10);
+		 * isElementPresent((this.jasperframe));
+		 * dr.get().switchTo().frame(this.jasperframe);
+		 */
 		click(this.librarytab);
 		TimeUnit.SECONDS.sleep(2);
 		click(this.ppmschema);
@@ -529,13 +538,13 @@ public class NikuHomePage extends TestBase {
 
 	public synchronized void CheckDBConnectionCAPPM() throws InterruptedException, IOException {
 		// log.debug("inside validate jaspersoft report");
-		/*ExtentTestManager.getTest().log(Status.INFO, "CA PPM DB Connection  report");
-		System.out.println("Validating CA PPM DB Connection");
-		click(this.hometab);
-		click(this.advancedreporting);
-		TimeUnit.SECONDS.sleep(10);
-		isElementPresent((this.jasperframe));
-		dr.get().switchTo().frame(this.jasperframe);*/
+		/*
+		 * ExtentTestManager.getTest().log(Status.INFO, "CA PPM DB Connection  report");
+		 * System.out.println("Validating CA PPM DB Connection"); click(this.hometab);
+		 * click(this.advancedreporting); TimeUnit.SECONDS.sleep(10);
+		 * isElementPresent((this.jasperframe));
+		 * dr.get().switchTo().frame(this.jasperframe);
+		 */
 		click(this.librarytab);
 		TimeUnit.SECONDS.sleep(2);
 		click(this.dbconnectioncappm);
@@ -544,17 +553,16 @@ public class NikuHomePage extends TestBase {
 		verifyEquals(m, "Normal", this.dataconnectionstatus.getText().trim());
 		ReportStatus("pass", "****CA PPM DB connection is validated successfully****");
 	}
-	
 
 	public synchronized void CheckDBConnectionDWS() throws InterruptedException, IOException {
 		// log.debug("inside validate jaspersoft report");
 		ExtentTestManager.getTest().log(Status.INFO, "DWS DB Connection  report");
-		/*System.out.println("Validating DWS DB Connection");
-		click(this.hometab);
-		click(this.advancedreporting);
-		TimeUnit.SECONDS.sleep(10);
-		isElementPresent((this.jasperframe));
-		dr.get().switchTo().frame(this.jasperframe);*/
+		/*
+		 * System.out.println("Validating DWS DB Connection"); click(this.hometab);
+		 * click(this.advancedreporting); TimeUnit.SECONDS.sleep(10);
+		 * isElementPresent((this.jasperframe));
+		 * dr.get().switchTo().frame(this.jasperframe);
+		 */
 		click(this.librarytab);
 		TimeUnit.SECONDS.sleep(2);
 		click(this.dbconnectiondatawarehouse);
@@ -564,7 +572,6 @@ public class NikuHomePage extends TestBase {
 		ReportStatus("pass", "****DWS DB connection is validated successfully****");
 		dr.get().switchTo().defaultContent();
 	}
-	
 
 	public void ValidateHDPCluster() throws InterruptedException, IOException {
 		ExtentTestManager.getTest().log(Status.INFO, "Validating HDP cluster");
@@ -593,14 +600,15 @@ public class NikuHomePage extends TestBase {
 			if (endpointurl != null) {
 				RestUtil.validateHDPCall();
 				ReportStatus("pass", "****HDP Clustor is validated successfully****");
+				
 			} else {
 				System.out.println("****HDP is not configured to this instance****");
-				ReportStatus("warn","****HDP is not configured to this instance****");
+				ReportStatus("warn", "****HDP is not configured to this instance****");
 			}
-		}else {
-			ReportStatus("warn","****HDP is not configured to this instance****");			
+		} else {
+			ReportStatus("warn", "****HDP is not configured to this instance****");
 		}
-
+		
 	}
 
 	public synchronized void LogOut() {

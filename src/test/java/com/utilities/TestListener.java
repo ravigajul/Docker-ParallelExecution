@@ -26,6 +26,8 @@ public class TestListener extends TestBase implements ITestListener, ISuiteListe
 	public synchronized void onStart(ITestContext context) {
 		System.out.println("*** Test Suite " + context.getName() + " started ***");
 		String fileSeperator = System.getProperty("file.separator");
+		String ZipfilePath=System.getProperty("user.dir") + fileSeperator + "TestReport.zip";
+		FileHelper.DeleteFile(ZipfilePath);
 		String reportsPath = System.getProperty("user.dir") + fileSeperator + "TestReport" + fileSeperator
 				+ "screenshots";
 		File file = new File(reportsPath);
@@ -49,11 +51,12 @@ public class TestListener extends TestBase implements ITestListener, ISuiteListe
 
 	public void onFinish(ISuite arg0) {
 
+		zipaction();
 		MonitoringMail mail = new MonitoringMail();
 		
 		try {
-			messageBody = "Hi All,"+"<br><br>"+" Please find the Test Execution Report Below"+"<br>"+ "http://" + InetAddress.getLocalHost().getHostAddress()
-					+ ":8000/TestReport/Test-Automaton-Report.html"+"<br><br><br>"+ "Regards,"+"<br>"+"HealthCheck Automation";
+			messageBody = "Hi All,"+"<br><br>"+" Please find the Test Execution Report Below and attached"+"<br>"+ "http://" + InetAddress.getLocalHost().getHostAddress()
+					+ ":8000/UISanityHealthCheck-Parallel/TestReport/Test-Automaton-Report.html"+"<br><br><br>"+ "Regards,"+"<br>"+"HealthCheck Automation";
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -65,6 +68,9 @@ public class TestListener extends TestBase implements ITestListener, ISuiteListe
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -79,7 +85,7 @@ public class TestListener extends TestBase implements ITestListener, ISuiteListe
 		System.out.println("****Executed " + result.getMethod().getMethodName() + " test successfully****");
 		ITestContext context = result.getTestContext();
 		driver = (WebDriver) context.getAttribute("driver");
-		ReportStatus("pass", "****" + result.getMethod().getMethodName() + " Passed****");
+		ExtentTestManager.getTest().log(Status.PASS,"****" + result.getMethod().getMethodName() + " Passed****");
 	}
 
 	public synchronized void onTestFailure(ITestResult result) {

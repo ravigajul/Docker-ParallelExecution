@@ -27,6 +27,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.ITestContext;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -34,6 +35,7 @@ import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.pages.NikuHomePage;
 import com.utilities.ExtentTestManager;
+import com.utilities.ZipUtility;
 
 public class TestBase {
 
@@ -397,6 +399,16 @@ public class TestBase {
 	public synchronized void teardown() {
 		if (dr.get() != null) {
 			dr.get().quit();
+		}
+	}
+	
+	
+	public synchronized void zipaction() {
+		try {
+			ZipUtility.ZipIt();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
