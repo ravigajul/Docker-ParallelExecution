@@ -2,6 +2,7 @@
 # QASanityAutomation
 # Docker_Selenium
 # Docker_Selenium
+#Read SeleniumGrid-Docker.docx present in this folder for more details.
 To Run the sript on Linux 
 #!/bin/bash
 Build_pid=$(sudo netstat -tpln|grep :8000|awk -F ' ' '{print $7}'|cut -d '/' -f1)
