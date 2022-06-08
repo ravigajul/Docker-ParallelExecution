@@ -63,3 +63,11 @@ To wait for the elements that are loaded at runtime
 AjaxElementLocatorFactory factory= new AjaxElementLocatorFactory(driver, 10);
 		PageFactory.initElements(factory, this);
 
+## Selenium Grid 4 Programatically shut down
+```batch
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":4444"') do taskkill /F /PID %%a
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":4442"') do taskkill /F /PID %%a
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":5556"') do taskkill /F /PID %%a
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":5559"') do taskkill /F /PID %%a
+powershell -command "Stop-Process -name 'cmd,'conhost' -Force"
+```
